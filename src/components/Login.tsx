@@ -1,4 +1,3 @@
-import React from "react";
 
 const Login = () => {
   const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
