@@ -1,14 +1,25 @@
-export function getTokenFromHash(): string | null {
-    const hash = window.location.hash;
-    const match = hash.match(/access_token=([^&]*)/);
-    return match ? match[1] : null;
+export async function generateCodeChallenge(codeVerifier: string) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(codeVerifier);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return btoa(String.fromCharCode(...new Uint8Array(digest)))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+export function generateCodeVerifier(length = 128) {
+  const charset =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  const values = new Uint32Array(length);
+  crypto.getRandomValues(values);
+  for (let i = 0; i < length; i++) {
+    result += charset[values[i] % charset.length];
   }
-  
-  export function saveToken(token: string) {
-    localStorage.setItem("spotify_access_token", token);
-  }
-  
-  export function readToken(): string | null {
-    return localStorage.getItem("spotify_access_token");
-  }
-  
+  return result;
+}
+
+export function readToken() {
+  return localStorage.getItem("spotify_token");
+}
