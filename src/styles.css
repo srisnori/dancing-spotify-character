@@ -1,0 +1,28 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: #121212;  /* dark background */
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column; /* if you want stacked content */
+}
+
+.dancing-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #1db954;
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}

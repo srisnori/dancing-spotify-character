@@ -1,28 +1,27 @@
-import { generateCodeVerifier, generateCodeChallenge } from "../utils/pkce";
+import React from "react";
 
-const CLIENT_ID = "83c43115c3f64d5ab7a90c6edd40f9d8";
-const REDIRECT_URI = "https://dancing-spotify-character.vercel.app/callback";
-const SCOPE = "user-read-playback-state user-read-currently-playing";
+const Login = () => {
+  const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+  const redirectUri = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
+  const scopes = [
+    "user-read-playback-state",
+    "user-read-currently-playing",
+  ].join(" ");
 
-export default function Login() {
-  const handleLogin = async () => {
-    const verifier = generateCodeVerifier();
-    localStorage.setItem("verifier", verifier); 
-    console.log("Verifier saved:", verifier);
+  const handleLogin = () => {
+    if (!clientId) {
+      alert("Spotify client ID is missing!");
+      return;
+    }
 
-    const challenge = await generateCodeChallenge(verifier);
+    const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(
+      redirectUri
+    )}&scope=${encodeURIComponent(scopes)}&response_type=token&show_dialog=true`;
 
-    const params = new URLSearchParams({
-      client_id: CLIENT_ID,
-      response_type: "code",
-      redirect_uri: REDIRECT_URI,
-      code_challenge_method: "S256",
-      code_challenge: challenge,
-      scope: SCOPE,
-    });
-
-    window.location.href = `https://accounts.spotify.com/authorize?${params.toString()}`;
+    window.location.href = authUrl;
   };
 
-  return <button onClick={handleLogin}>Login with Spotify</button>;
-}
+  return <button onClick={handleLogin}>Log in to Spotify</button>;
+};
+
+export default Login;
